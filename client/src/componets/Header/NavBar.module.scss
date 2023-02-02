@@ -1,0 +1,26 @@
+.header{
+  height: 70px;
+  width: 100%;
+  background: darkslategrey;
+  .content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    p{
+      color: #fff;
+      font-size: 32px;
+    }
+    nav{
+      ul{
+        display: flex;
+        li{
+          padding: 0 20px;
+          a{
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
