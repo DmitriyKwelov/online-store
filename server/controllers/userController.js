@@ -2,6 +2,7 @@ const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const {User, Basket} = require('../models/models')
+const UserDto = require('../dtos/user-dto')
 
 const generateJwt = (id, email, role) => {
     return jwt.sign(
@@ -24,8 +25,9 @@ class UserController {
         const hashPassword = await bcrypt.hash(password, 5)
         const user = await User.create({email, role, password: hashPassword})
         const basket = await Basket.create({userId: user.id})
-        const token = generateJwt(user.id, user.email, user.role);
-        return res.json({token})
+        const userDto = new UserDto(user)
+        const token = generateJwt({userDto})
+        return res.json({token, user: userDto})
     }
 
     async login(req, res, next) {
@@ -38,11 +40,13 @@ class UserController {
         if (!comparePassword) {
             return next(ApiError.internal('Указан неверный пароль'))
         }
-        const token = generateJwt(user.id, user.email, user.role)
-        return res.json({token})
+        const userDto = new UserDto(user)
+        const token = generateJwt({userDto})
+        return res.json({token, user: userDto})
     }
 
     async check(req, res, next) {
+        console.log(req)
         const token = generateJwt(req.user.id, req.user.email, req.user.role)
         return res.json({token})
     }
