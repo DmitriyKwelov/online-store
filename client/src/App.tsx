@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Route, Routes} from "react-router-dom";
 import PrivateRoute from "./utils/router/PrivateRoute";
 import Shop from "./pages/Shop";
@@ -8,9 +8,38 @@ import Basket from "./pages/Basket";
 import './scss/_normalize.scss'
 import Header from "./componets/Header";
 import Auth from "./pages/Auth";
+import {useAppDispatch} from "./redux/store";
+import {check, setAuthState, Status} from "./redux/slices/authSlice";
+import {$authHost} from "./http";
 
-const App:FC = () => {
-    console.log(process.env.REACT_APP_TT)
+const App: FC = () => {
+
+    const [isLoading, setIsLoading] = useState(true)
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const {data} = await $authHost.get('api/user/auth');
+                localStorage.setItem('token', data.token)
+                dispatch(setAuthState({
+                    status: Status.SUCCESS,
+                    isAuth: true,
+                    user: data.user
+                }))
+                setIsLoading(false)
+            } catch (e) {
+                console.log(e)
+                setIsLoading(false)
+            }
+        }
+        checkAuth()
+    }, [])
+
+    if(isLoading){
+        return <div>загрузка</div>
+    }
+
     return (
         <>
             <Header/>

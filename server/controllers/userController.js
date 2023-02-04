@@ -46,9 +46,9 @@ class UserController {
     }
 
     async check(req, res, next) {
-        console.log(req)
+        console.log(req.user.id.userDto)
         const token = generateJwt(req.user.id, req.user.email, req.user.role)
-        return res.json({token})
+        return res.json({token, user: req.user.id.userDto})
     }
 }
 
