@@ -11,19 +11,23 @@ export enum Status {
 
 interface AuthState {
     types: null | IType[];
+    selectedType: null | IType;
     brands: null | IBrand[];
+    selectedBrand: null | IBrand;
     status: Status
 }
 
 const initialState: AuthState = {
     types: null,
+    selectedType: null,
     brands: null,
+    selectedBrand: null,
     status: Status.LOADING
 }
 
-export const createType = createAsyncThunk('filter/createType', async (params) => {
+export const createType = createAsyncThunk('filter/createType', async (name: string) => {
     try {
-        const {data} = await $authHost.post('api/type', params);
+        const {data} = await $authHost.post('api/type', {name: name});
         return data;
     } catch (e) {
         console.log(e);
@@ -37,9 +41,9 @@ export const fetchTypes = createAsyncThunk('filter/type', async () => {
         console.log(e);
     }
 })
-export const createBrand = createAsyncThunk('filter/createBrand', async (params) => {
+export const createBrand = createAsyncThunk('filter/createBrand', async (name: string) => {
     try {
-        const {data} = await $authHost.post('api/brand', params);
+        const {data} = await $authHost.post('api/brand', {name: name});
         return data;
     } catch (e) {
         console.log(e);
@@ -58,7 +62,14 @@ export const fetchBrand = createAsyncThunk('filter/brand', async () => {
 export const filterSlice = createSlice({
     name: 'filter',
     initialState,
-    reducers: {},
+    reducers: {
+        setSelectedType: (state, action: PayloadAction<IType>) => {
+            state.selectedType = action.payload
+        },
+        setSelectedBrand: (state, action: PayloadAction<IBrand>) => {
+            state.selectedBrand = action.payload
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchTypes.pending, (state) => {
@@ -90,6 +101,6 @@ export const filterSlice = createSlice({
 
 export const selectFilters = (state: RootState) => state.filter
 
-// export const {setAuthState} = filterSlice.actions
+export const {setSelectedType, setSelectedBrand} = filterSlice.actions
 
 export default filterSlice.reducer

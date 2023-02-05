@@ -1,15 +1,26 @@
 import React, {FC} from 'react';
 import {ListGroup} from "react-bootstrap";
 import {useSelector} from "react-redux";
-import {selectFilters} from "../redux/slices/filterSlice";
+import {selectFilters, setSelectedType} from "../redux/slices/filterSlice";
+import {useAppDispatch} from "../redux/store";
 
 const TypeBar:FC = () => {
-    const {types} = useSelector(selectFilters)
+    const {types, selectedType} = useSelector(selectFilters)
+
+    const dispatch = useAppDispatch();
+
     return (
         <ListGroup>
             {
                 types && types.map(type =>
-                    <ListGroup.Item key={type.id}>{type.name}</ListGroup.Item>
+                    <ListGroup.Item
+                        style={{cursor: 'pointer'}}
+                        active={type.id === selectedType?.id}
+                        key={type.id}
+                        onClick={() => dispatch(setSelectedType(type))}
+                    >
+                        {type.name}
+                    </ListGroup.Item>
                 )
             }
         </ListGroup>

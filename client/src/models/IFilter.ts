@@ -1,8 +1,8 @@
 export interface IType{
-    id: string;
+    id: number;
     name: string
 }
 export interface IBrand{
-    id: string;
+    id: number;
     name: string
 }
